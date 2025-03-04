@@ -101,17 +101,15 @@ try {
   console.error("Error initializing OpenAI client:", error);
 }
 
-// Initialize Pinecone client or use mock data
+// Initialize Pinecone client
 let pinecone;
 let index;
-let useMockPinecone = false;
 
 try {
   console.log("Initializing Pinecone with environment:", process.env.PINECONE_ENVIRONMENT);
   
   if (!process.env.PINECONE_API_KEY || !process.env.PINECONE_ENVIRONMENT) {
-    console.warn("Missing Pinecone API key or environment. Will use mock data.");
-    useMockPinecone = true;
+    throw new Error("Missing Pinecone API key or environment.");
   } else {
     pinecone = new Pinecone({
       apiKey: process.env.PINECONE_API_KEY,
@@ -126,63 +124,8 @@ try {
   }
 } catch (error) {
   console.error("Error initializing Pinecone:", error);
-  console.log("Will use mock job data instead");
-  useMockPinecone = true;
+  process.exit(1); // Exit the process if Pinecone initialization fails
 }
-
-// Mock job data for development without Pinecone
-const MOCK_JOBS = [
-  {
-    jobTitle: "Machine Learning Engineer",
-    company: "TechCorp",
-    location: "Seattle, WA",
-    employmentType: "Full-time",
-    salary: "$120,000 - $150,000",
-    applyLink: "https://example.com/apply",
-    description: "We're looking for a Machine Learning Engineer to join our AI team. You'll work on developing and deploying ML models for our products.",
-    matchScore: 0.92
-  },
-  {
-    jobTitle: "Data Scientist",
-    company: "AnalyticsPro",
-    location: "Remote",
-    employmentType: "Full-time",
-    salary: "$110,000 - $140,000",
-    applyLink: "https://example.com/apply",
-    description: "Join our data science team to extract insights from large datasets and build predictive models.",
-    matchScore: 0.89
-  },
-  {
-    jobTitle: "AI Research Scientist",
-    company: "InnovateAI",
-    location: "San Francisco, CA",
-    employmentType: "Full-time",
-    salary: "$130,000 - $160,000",
-    applyLink: "https://example.com/apply",
-    description: "Research and develop cutting-edge AI algorithms and techniques to solve complex problems.",
-    matchScore: 0.85
-  },
-  {
-    jobTitle: "NLP Engineer",
-    company: "LanguageTech",
-    location: "Boston, MA",
-    employmentType: "Full-time",
-    salary: "$115,000 - $145,000",
-    applyLink: "https://example.com/apply",
-    description: "Build and improve natural language processing systems for our conversational AI platform.",
-    matchScore: 0.82
-  },
-  {
-    jobTitle: "Computer Vision Specialist",
-    company: "VisionWorks",
-    location: "Austin, TX",
-    employmentType: "Full-time",
-    salary: "$125,000 - $155,000",
-    applyLink: "https://example.com/apply",
-    description: "Develop computer vision algorithms and systems for our autonomous robotics platform.",
-    matchScore: 0.78
-  }
-];
 
 // Authentication middleware
 const authenticateToken = (req, res, next) => {
@@ -728,17 +671,9 @@ async function generateEmbedding(text) {
   }
 }
 
-// Function to find matching jobs using Pinecone or mock data
+// Function to find matching jobs using Pinecone
 async function findMatchingJobs(embedding) {
   try {
-    // Use mock data if Pinecone is not available or explicitly set to use mock data
-    if (useMockPinecone || !index) {
-      console.log("Using mock job data");
-      // Simulate a delay to make it feel realistic
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      return MOCK_JOBS;
-    }
-    
     // Query Pinecone for similar vectors
     console.log("Querying Pinecone for similar job vectors");
     const queryResponse = await index.query({
@@ -766,8 +701,7 @@ async function findMatchingJobs(embedding) {
     return matches;
   } catch (error) {
     console.error('Error finding matching jobs:', error);
-    console.log("Falling back to mock job data due to error");
-    return MOCK_JOBS;
+    throw new Error('Error finding matching jobs');
   }
 }
 
