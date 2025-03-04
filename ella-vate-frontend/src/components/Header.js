@@ -13,30 +13,30 @@ function Header() {
   };
   
   return (
-    <header className="header">
-      <div className="container header-container">
-        <Link to="/" className="logo">
-          <div className="logo-circle"></div>
+    <header className="header bg-light shadow-sm">
+      <div className="container d-flex justify-content-between align-items-center py-2">
+        <Link to="/" className="navbar-brand">
+          <div className="logo-circle bg-primary"></div>
           <span>Ella-Vate</span>
         </Link>
         
         <nav className="nav">
-          <ul>
-            <li><Link to="/">Our Product</Link></li>
+          <ul className="nav">
+            <li className="nav-item"><Link to="/" className="nav-link">Our Product</Link></li>
             {currentUser && (
               <>
-                <li><Link to="/dashboard">Dashboard</Link></li>
-                <li><Link to="/saved-jobs">Saved Jobs</Link></li>
+                <li className="nav-item"><Link to="/dashboard" className="nav-link">Dashboard</Link></li>
+                <li className="nav-item"><Link to="/saved-jobs" className="nav-link">Saved Jobs</Link></li>
               </>
             )}
-            <li><Link to="/about">About</Link></li>
+            <li className="nav-item"><Link to="/about" className="nav-link">About</Link></li>
           </ul>
         </nav>
         
         {currentUser ? (
-          <button className="btn btn-logout" onClick={handleLogout}>Log Out</button>
+          <button className="btn btn-outline-primary" onClick={handleLogout}>Log Out</button>
         ) : (
-          <Link to="/login" className="btn btn-login">Sign In</Link>
+          <Link to="/login" className="btn btn-primary">Sign In</Link>
         )}
       </div>
     </header>

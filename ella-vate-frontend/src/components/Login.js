@@ -32,48 +32,50 @@ function Login() {
   };
   
   return (
-    <div className="auth-container">
-      <div className="auth-form-container">
-        <h1>Welcome Back</h1>
-        <p className="auth-subtitle">Sign in to continue your job search</p>
+    <div className="auth-container d-flex justify-content-center align-items-center min-vh-100">
+      <div className="auth-form-container bg-white p-4 rounded shadow-sm">
+        <h1 className="text-center">Welcome Back</h1>
+        <p className="auth-subtitle text-center text-muted">Sign in to continue your job search</p>
         
         <form onSubmit={handleSubmit} className="auth-form">
-          <div className="form-group">
+          <div className="form-group mb-3">
             <label htmlFor="email">Email</label>
             <input
               type="email"
               id="email"
               name="email"
+              className="form-control"
               value={formData.email}
               onChange={handleChange}
               required
             />
           </div>
           
-          <div className="form-group">
+          <div className="form-group mb-3">
             <label htmlFor="password">Password</label>
             <input
               type="password"
               id="password"
               name="password"
+              className="form-control"
               value={formData.password}
               onChange={handleChange}
               required
             />
           </div>
           
-          {error && <p className="error-message">{error}</p>}
+          {error && <p className="text-danger">{error}</p>}
           
           <button 
             type="submit" 
-            className="btn btn-primary btn-submit" 
+            className="btn btn-primary w-100" 
             disabled={loading}
           >
             {loading ? 'Signing In...' : 'Sign In'}
           </button>
         </form>
         
-        <p className="auth-redirect">
+        <p className="auth-redirect text-center mt-3">
           Don't have an account? <Link to="/register">Sign Up</Link>
         </p>
       </div>

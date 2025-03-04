@@ -4,7 +4,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: calc(100vh - 70px);
+  min-height: 100vh;
   padding: 40px 20px;
 }
 
@@ -24,7 +24,7 @@
 }
 
 .auth-subtitle {
-  color: var(--light-text);
+  color: #6c757d;
   text-align: center;
   margin-bottom: 25px;
 }
@@ -47,11 +47,11 @@
   margin-top: 20px;
   text-align: center;
   font-size: 14px;
-  color: var(--light-text);
+  color: #6c757d;
 }
 
 .auth-redirect a {
-  color: var(--primary-color);
+  color: #007bff;
   text-decoration: none;
   font-weight: 500;
 }
