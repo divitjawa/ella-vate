@@ -1,0 +1,107 @@
+/* SavedJobs.css */
+
+.saved-jobs-container {
+  max-width: 800px;
+  margin: 40px auto;
+  padding: 0 20px;
+}
+
+.saved-jobs-container h1 {
+  font-size: 24px;
+  margin-bottom: 20px;
+}
+
+.no-saved-jobs {
+  background-color: white;
+  padding: 30px;
+  border-radius: 8px;
+  text-align: center;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.no-saved-jobs p {
+  color: var(--light-text);
+  margin-bottom: 20px;
+}
+
+.saved-jobs-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.saved-job-card {
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  padding: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.saved-job-info {
+  flex: 1;
+}
+
+.saved-job-title {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 5px;
+}
+
+.saved-job-company {
+  font-size: 14px;
+  color: var(--light-text);
+  margin-bottom: 3px;
+}
+
+.saved-job-date {
+  font-size: 12px;
+  color: var(--light-text);
+  margin-bottom: 5px;
+}
+
+.saved-job-score {
+  font-size: 14px;
+  color: var(--light-text);
+}
+
+.score-value {
+  color: var(--primary-color);
+  font-weight: 500;
+}
+
+.saved-job-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.btn-remove {
+  background-color: white;
+  border: 1px solid #dc3545;
+  color: #dc3545;
+}
+
+.btn-remove:hover {
+  background-color: #ffecef;
+}
+
+.btn-view {
+  background-color: var(--primary-color);
+  color: white;
+  text-decoration: none;
+}
+
+.btn-view:hover {
+  background-color: var(--secondary-color);
+}
+
+.error-message {
+  background-color: #ffecef;
+  border: 1px solid #dc3545;
+  color: #dc3545;
+  padding: 15px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+}

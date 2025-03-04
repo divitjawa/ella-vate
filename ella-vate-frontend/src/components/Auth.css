@@ -1,0 +1,61 @@
+/* Auth.css - Styles for authentication components */
+
+.auth-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: calc(100vh - 70px);
+  padding: 40px 20px;
+}
+
+.auth-form-container {
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  padding: 30px;
+  width: 100%;
+  max-width: 450px;
+}
+
+.auth-form-container h1 {
+  font-size: 24px;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+.auth-subtitle {
+  color: var(--light-text);
+  text-align: center;
+  margin-bottom: 25px;
+}
+
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.auth-form .form-group {
+  margin-bottom: 15px;
+}
+
+.auth-form .btn-submit {
+  margin-top: 10px;
+}
+
+.auth-redirect {
+  margin-top: 20px;
+  text-align: center;
+  font-size: 14px;
+  color: var(--light-text);
+}
+
+.auth-redirect a {
+  color: var(--primary-color);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.auth-redirect a:hover {
+  text-decoration: underline;
+}

@@ -1,0 +1,48 @@
+/* CoverLetterGenerator.css */
+
+.cover-letter-container {
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  padding: 20px;
+  margin-top: 20px;
+}
+
+.cover-letter-container h2 {
+  font-size: 20px;
+  margin-bottom: 10px;
+}
+
+.cover-letter-info {
+  color: var(--light-text);
+  margin-bottom: 20px;
+}
+
+.cover-letter-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 15px;
+}
+
+.cover-letter-preview {
+  background-color: var(--light-background);
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  padding: 20px;
+  white-space: pre-wrap;
+  font-family: 'Courier New', monospace;
+  font-size: 14px;
+  line-height: 1.5;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.btn-secondary {
+  background-color: white;
+  border: 1px solid var(--primary-color);
+  color: var(--primary-color);
+}
+
+.btn-secondary:hover {
+  background-color: var(--light-background);
+}

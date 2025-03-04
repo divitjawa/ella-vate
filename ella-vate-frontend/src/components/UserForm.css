@@ -1,0 +1,52 @@
+/* UserForm.css */
+
+.user-form-container {
+  max-width: 700px;
+  margin: 40px auto;
+  padding: 20px;
+}
+
+.user-form-container h1 {
+  font-size: 36px;
+  margin-bottom: 10px;
+  font-weight: 700;
+}
+
+.subtitle {
+  color: var(--light-text);
+  margin-bottom: 30px;
+}
+
+.user-form {
+  background-color: white;
+  padding: 30px;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.btn-upload {
+  background-color: white;
+  border: 1px solid var(--primary-color);
+  color: var(--primary-color);
+}
+
+.btn-upload:hover {
+  background-color: #f0f5ff;
+}
+
+.file-name {
+  margin-top: 10px;
+  font-size: 14px;
+  color: var(--light-text);
+}
+
+.btn-submit {
+  width: 100%;
+  padding: 12px;
+  margin-top: 10px;
+  font-weight: 600;
+}
