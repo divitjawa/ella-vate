@@ -113,7 +113,7 @@ try {
   } else {
     pinecone = new Pinecone({
       apiKey: process.env.PINECONE_API_KEY,
-      environment: process.env.PINECONE_ENVIRONMENT
+      // environment: process.env.PINECONE_ENVIRONMENT
     });
     
     // Get a reference to your index
