@@ -1,7 +1,9 @@
 import React, { useState, useContext } from 'react';
 import AuthContext from '../context/AuthContext';
 import CoverLetterGenerator from './CoverLetterGenerator';
+import { Tooltip } from 'react-tooltip';
 import './JobMatches.css';
+import job_logo_placeholder from '../assets/job_logo_placeholder.jpg';
 
 function JobMatches({ userData, jobMatches }) {
   const [selectedJob, setSelectedJob] = useState(null);
@@ -65,31 +67,31 @@ function JobMatches({ userData, jobMatches }) {
             <div key={index} className="job-card">
               <div className="job-card-content">
                 <div className="job-logo">
-                  <img src={`https://via.placeholder.com/50?text=${job.company.charAt(0)}`} alt={job.company} />
+                  <img src={job_logo_placeholder} alt={job.company} />
                 </div>
                 
                 <div className="job-info">
-                  <h3 className="job-title">{job.jobTitle}</h3>
-                  <p className="job-company">{job.company}</p>
-                  <p className="job-location">{job.location}</p>
-                  <p className="job-salary">{job.salary}</p>
+                  <h3 className="job-title" data-tip="Job Title">{job.jobTitle}</h3>
+                  <p className="job-company" data-tip="Company">{job.company}</p>
+                  <p className="job-location" data-tip="Location">{job.location}</p>
+                  <p className="job-salary" data-tip="Salary">{job.salary}</p>
                   
-                  <div className="job-match-score">
+                  <div className="job-match-score" data-tip="Match Score">
                     <span className="match-arrow">↑</span>
-                    <span className="match-score">{job.matchScore.toFixed(10)}</span>
+                    <span className="match-score">{job.matchScore.toFixed(2)}</span>
                   </div>
                 </div>
                 
                 <div className="job-actions">
-                  <button className="btn btn-save" onClick={() => saveJob(job)}>
-                    <span className="icon-bookmark"></span>
+                  <button className="btn btn-save" onClick={() => saveJob(job)} data-tip="Save Job">
+                    <span className="icon-bookmark">Save Job</span>
                   </button>
                   
-                  <button className="btn btn-details" onClick={() => toggleJobDetails(job)}>
+                  <button className="btn btn-details" onClick={() => toggleJobDetails(job)} data-tip="View Details">
                     Details
                   </button>
                   
-                  <a href={job.applyLink} target="_blank" rel="noopener noreferrer" className="btn btn-apply">
+                  <a href={job.applyLink} target="_blank" rel="noopener noreferrer" className="btn btn-apply" data-tip="Apply for Job">
                     Apply
                   </a>
                 </div>
@@ -113,6 +115,8 @@ function JobMatches({ userData, jobMatches }) {
           </div>
         )}
       </div>
+      
+      <Tooltip />
     </div>
   );
 }

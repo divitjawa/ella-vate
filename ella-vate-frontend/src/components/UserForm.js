@@ -1,12 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
+import AuthContext from '../context/AuthContext';
 import './UserForm.css';
 
 function UserForm({ onSubmit, isLoading, error }) {
   const navigate = useNavigate();
+  const { currentUser } = useContext(AuthContext);
   
   const [formData, setFormData] = useState({
-    fullName: '',
+    fullName: currentUser ? currentUser.fullName : '',
     currentRole: '',
     desiredRole: '',
     additionalInfo: ''
@@ -79,17 +81,19 @@ function UserForm({ onSubmit, isLoading, error }) {
       <p className="subtitle">Join millions of users who have found their dream job on (our app)</p>
       
       <form onSubmit={handleSubmit} className="user-form">
-        <div className="form-group">
-          <label htmlFor="fullName">Full name</label>
-          <input
-            type="text"
-            id="fullName"
-            name="fullName"
-            value={formData.fullName}
-            onChange={handleChange}
-            required
-          />
-        </div>
+        {!currentUser && (
+          <div className="form-group">
+            <label htmlFor="fullName">Full name</label>
+            <input
+              type="text"
+              id="fullName"
+              name="fullName"
+              value={formData.fullName}
+              onChange={handleChange}
+              required
+            />
+          </div>
+        )}
         
         <div className="form-group">
           <label htmlFor="currentRole">Current Role</label>

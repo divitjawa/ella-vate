@@ -7,6 +7,7 @@ import Login from './components/Login';
 import Register from './components/Register';
 import SavedJobs from './components/SavedJobs';
 import ProtectedRoute from './components/ProtectedRoute';
+import About from './components/About';
 import { AuthProvider } from './context/AuthContext';
 import './App.css';
 
@@ -61,6 +62,7 @@ function App() {
               {/* Public routes */}
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
+              <Route path="/about" element={<About />} />
               
               {/* Protected routes */}
               <Route element={<ProtectedRoute />}>
