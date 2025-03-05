@@ -153,7 +153,17 @@ const authenticateToken = (req, res, next) => {
 app.post('/api/auth/register', async (req, res) => {
   console.log("Registration endpoint called");
   // Set CORS headers manually to be extra safe
-  res.header('Access-Control-Allow-Origin', 'http://localhost:3000');
+  const allowedOrigins = [
+    'http://localhost:3000',
+    'https://ella-vate-ui.onrender.com',
+    process.env.FRONTEND_URL
+  ].filter(Boolean); // Remove any empty/undefined values
+  
+  const origin = req.headers.origin;
+  if (allowedOrigins.includes(origin)) {
+    res.header('Access-Control-Allow-Origin', origin);
+  }
+  
   res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
   res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
   res.header('Access-Control-Allow-Credentials', 'true');
@@ -220,7 +230,17 @@ app.post('/api/auth/register', async (req, res) => {
 
 // Handle OPTIONS preflight requests for registration
 app.options('/api/auth/register', (req, res) => {
-  res.header('Access-Control-Allow-Origin', 'http://localhost:3000');
+  const allowedOrigins = [
+    'http://localhost:3000',
+    'https://ella-vate-ui.onrender.com',
+    process.env.FRONTEND_URL
+  ].filter(Boolean); // Remove any empty/undefined values
+  
+  const origin = req.headers.origin;
+  if (allowedOrigins.includes(origin)) {
+    res.header('Access-Control-Allow-Origin', origin);
+  }
+  
   res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
   res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
   res.header('Access-Control-Allow-Credentials', 'true');
