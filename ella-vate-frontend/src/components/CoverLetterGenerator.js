@@ -2,6 +2,7 @@ import React, { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import AuthContext from '../context/AuthContext';
 import './CoverLetterGenerator.css';
+import API_ENDPOINTS from '../config';
 
 function CoverLetterGenerator({ job, resumeText }) {
   const [coverLetter, setCoverLetter] = useState('');
@@ -28,7 +29,7 @@ function CoverLetterGenerator({ job, resumeText }) {
       
       const token = localStorage.getItem('auth_token');
       
-      const response = await fetch('http://localhost:5050/api/generate-cover-letter', {
+      const response = await fetch(API_ENDPOINTS.COVER_LETTER, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

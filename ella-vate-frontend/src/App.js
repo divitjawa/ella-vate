@@ -10,6 +10,7 @@ import ProtectedRoute from './components/ProtectedRoute';
 import About from './components/About';
 import { AuthProvider } from './context/AuthContext';
 import './App.css';
+import API_ENDPOINTS from './config';
 
 function App() {
   const [userData, setUserData] = useState(null);
@@ -27,7 +28,7 @@ function App() {
       const token = localStorage.getItem('auth_token');
       const headers = token ? { 'Authorization': `Bearer ${token}` } : {};
       
-      const response = await fetch('http://localhost:5050/api/profile', {
+      const response = await fetch(API_ENDPOINTS.PROFILE, {
         method: 'POST',
         headers,
         body: formData, // FormData already contains the file and form fields

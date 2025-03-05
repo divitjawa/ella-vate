@@ -57,12 +57,16 @@ const User = mongoose.model('User', userSchema);
 const app = express();
 const port = process.env.PORT || 5050;
 
-// Configure CORS
+// Update the CORS configuration to allow requests from Render domains
 app.use(cors({
-  origin: 'http://localhost:3000', // Allow your React app's URL
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // Allow these HTTP methods
-  allowedHeaders: ['Content-Type', 'Authorization'], // Allow these headers
-  credentials: true // Allow cookies to be sent with requests
+  origin: [
+    'http://localhost:3000', 
+    'https://ella-vate-ui.onrender.com',    // Your Render frontend URL
+    process.env.FRONTEND_URL             // From environment variable
+  ].filter(Boolean), // Remove any undefined/empty values
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true
 }));
 
 // Configure middleware

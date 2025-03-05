@@ -4,6 +4,7 @@ import CoverLetterGenerator from './CoverLetterGenerator';
 import { Tooltip } from 'react-tooltip';
 import './JobMatches.css';
 import job_logo_placeholder from '../assets/job_logo_placeholder.jpg';
+import API_ENDPOINTS from '../config';
 
 function JobMatches({ userData, jobMatches }) {
   const [selectedJob, setSelectedJob] = useState(null);
@@ -28,7 +29,7 @@ function JobMatches({ userData, jobMatches }) {
     try {
       const token = localStorage.getItem('auth_token');
       
-      const response = await fetch('http://localhost:5050/api/saved-jobs', {
+      const response = await fetch(API_ENDPOINTS.SAVED_JOBS, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -39,7 +40,7 @@ function JobMatches({ userData, jobMatches }) {
           jobTitle: job.jobTitle,
           company: job.company,
           matchScore: job.matchScore,
-        }),
+        })
       });
       
       if (!response.ok) {

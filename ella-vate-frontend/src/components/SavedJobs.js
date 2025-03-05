@@ -2,6 +2,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import { Link } from 'react-router-dom';
 import AuthContext from '../context/AuthContext';
 import './SavedJobs.css';
+import API_ENDPOINTS from '../config';
 
 function SavedJobs() {
   const [savedJobs, setSavedJobs] = useState([]);
@@ -19,7 +20,7 @@ function SavedJobs() {
         
         const token = localStorage.getItem('auth_token');
         
-        const response = await fetch('http://localhost:5050/api/saved-jobs', {
+        const response = await fetch(API_ENDPOINTS.SAVED_JOBS, {
           headers: {
             'Authorization': `Bearer ${token}`,
           },
