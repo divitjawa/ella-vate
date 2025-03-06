@@ -1073,12 +1073,12 @@ async function findMatchingJobs(embedding, userPreferences = {}) {
       }
       
       if (roleKeywords.size > 0) {
-        filters.job_title = { "$containsAny": Array.from(roleKeywords) };
+        filters.job_title = { "$in": Array.from(roleKeywords) };
       }
     }
     
     if (userPreferences.location) {
-      filters.location = { "$containsAny": [userPreferences.location.toLowerCase()] };
+      filters.location = { "$in": [userPreferences.location.toLowerCase()] };
     }
     
     // Determine if we should use filters
