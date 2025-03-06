@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import AuthContext from '../context/AuthContext';
 import './UserForm.css';
@@ -16,6 +16,7 @@ function UserForm({ onSubmit, isLoading, error }) {
   
   const [resumeFile, setResumeFile] = useState(null);
   const [fileError, setFileError] = useState('');
+  const [animateButton, setAnimateButton] = useState(false);
   
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -49,6 +50,12 @@ function UserForm({ onSubmit, isLoading, error }) {
     
     setFileError('');
     setResumeFile(file);
+    setAnimateButton(true);
+    
+    // Reset animation after a short delay
+    setTimeout(() => {
+      setAnimateButton(false);
+    }, 500);
   };
   
   const handleSubmit = async (e) => {
@@ -74,22 +81,33 @@ function UserForm({ onSubmit, isLoading, error }) {
       navigate('/matches');
     }
   };
+
+  // Custom file name display logic
+  const formatFileName = (name) => {
+    if (!name) return '';
+    if (name.length <= 25) return name;
+    
+    const extension = name.split('.').pop();
+    const baseName = name.substring(0, name.length - extension.length - 1);
+    return `${baseName.substring(0, 18)}...${extension}`;
+  };
   
   return (
     <div className="user-form-container">
-      <h1>Find your match!</h1>
-      <p className="subtitle">Join millions of users who have found their dream job on (our app)</p>
+      <h1>Launch Your Career to New Heights</h1>
+      <p className="subtitle">Over 2 million professionals found their perfect job match on Ella-Vate last year</p>
       
       <form onSubmit={handleSubmit} className="user-form">
         {!currentUser && (
           <div className="form-group">
-            <label htmlFor="fullName">Full name</label>
+            <label htmlFor="fullName">Full Name</label>
             <input
               type="text"
               id="fullName"
               name="fullName"
               value={formData.fullName}
               onChange={handleChange}
+              placeholder="Enter your full name"
               required
             />
           </div>
@@ -103,6 +121,7 @@ function UserForm({ onSubmit, isLoading, error }) {
             name="currentRole"
             value={formData.currentRole}
             onChange={handleChange}
+            placeholder="e.g. Software Developer"
             required
           />
         </div>
@@ -115,6 +134,7 @@ function UserForm({ onSubmit, isLoading, error }) {
             name="desiredRole"
             value={formData.desiredRole}
             onChange={handleChange}
+            placeholder="e.g. Senior Software Engineer"
             required
           />
         </div>
@@ -126,13 +146,19 @@ function UserForm({ onSubmit, isLoading, error }) {
             name="additionalInfo"
             value={formData.additionalInfo}
             onChange={handleChange}
+            placeholder="Describe your ideal work environment, compensation expectations, remote/hybrid preferences, etc."
             rows="4"
           ></textarea>
         </div>
         
-        <div className="form-group">
-          <button type="button" className="btn btn-upload" onClick={() => document.getElementById('resumeUpload').click()}>
-            Upload Resume
+        <div className="form-group resume-upload-container">
+          <label htmlFor="resumeUpload" className="resume-label">Your Resume</label>
+          <button 
+            type="button" 
+            className={`btn btn-upload ${animateButton ? 'animate' : ''}`} 
+            onClick={() => document.getElementById('resumeUpload').click()}
+          >
+            Upload Your Resume
           </button>
           <input
             type="file"
@@ -141,7 +167,8 @@ function UserForm({ onSubmit, isLoading, error }) {
             accept=".pdf,.docx,.txt"
             style={{ display: 'none' }}
           />
-          {resumeFile && <p className="file-name">Selected file: {resumeFile.name}</p>}
+          {resumeFile && <p className="file-name">Selected file: {formatFileName(resumeFile.name)}</p>}
+          {!resumeFile && <p className="file-hint">Upload your resume to increase your match rate by 80%</p>}
           {fileError && <p className="error-message">{fileError}</p>}
         </div>
         
@@ -149,7 +176,7 @@ function UserForm({ onSubmit, isLoading, error }) {
         
         <button 
           type="submit" 
-          className="btn btn-primary btn-submit" 
+          className={`btn btn-primary btn-submit ${isLoading ? 'loading' : ''}`}
           disabled={isLoading}
         >
           {isLoading ? 'Processing...' : 'Apply Changes'}

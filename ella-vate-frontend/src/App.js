@@ -39,6 +39,9 @@ function App() {
       }
       
       const data = await response.json();
+      console.log('API response data:', data);
+      console.log('Resume text in response:', data.profile?.resumeText ? 'Available' : 'Missing');
+      console.log('Resume text length:', data.profile?.resumeText?.length || 0);
       setUserData(data.profile);
       setJobMatches(data.matches);
       setIsLoading(false);
