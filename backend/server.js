@@ -722,6 +722,7 @@ function generateMatchExplanation(match, isCareerTransition, currentRole, desire
 /**
  * Get a qualitative description of the match quality.
  */
+
 function getMatchQualityDescription(match, isCareerTransition) {
   const score = match.finalScore;
   if (isCareerTransition) {
@@ -738,6 +739,8 @@ function getMatchQualityDescription(match, isCareerTransition) {
     return "Partial Match";
   }
 }
+
+
 /**
  * Generate fallback job matches when Pinecone query fails.
  */
@@ -774,6 +777,98 @@ function generateFallbackJobMatches(userPreferences = {}) {
     }
   ];
 }
+
+// Step 1: Remove the duplicate getMatchQualityDescription function
+// You have two identical functions in your code - remove the second one
+
+// Step 2: Add the findMatchingJobs function right after the generateFallbackJobMatches function
+// and before the Authentication Middleware section:
+
+/**
+ * Find matching jobs using Pinecone.
+ */
+async function findMatchingJobs(embedding, userPreferences = {}) {
+  try {
+    console.log("Finding matching jobs with enhanced parameters");
+    
+    // Create filters based on user preferences
+    const filters = {};
+    
+    if (userPreferences.desiredRole) {
+      // Extract keywords from both original and expanded desired role
+      const roleKeywords = new Set();
+      
+      // Process the expanded role
+      userPreferences.desiredRole
+        .toLowerCase()
+        .split(/\W+/)
+        .filter(word => word.length > 3)
+        .forEach(word => roleKeywords.add(word));
+      
+      // Also add the original role if available
+      if (userPreferences.originalDesiredRole) {
+        userPreferences.originalDesiredRole
+          .toLowerCase()
+          .split(/\W+/)
+          .filter(word => word.length > 2)  // Include shorter acronyms
+          .forEach(word => roleKeywords.add(word));
+      }
+      
+      // Add common role variations
+      if (roleKeywords.has('engineer')) {
+        roleKeywords.add('developer');
+        roleKeywords.add('engineering');
+      }
+      if (roleKeywords.has('manager')) {
+        roleKeywords.add('management');
+        roleKeywords.add('lead');
+      }
+      
+      if (roleKeywords.size > 0) {
+        filters.job_title = { "$in": Array.from(roleKeywords) };
+      }
+    }
+    
+    if (userPreferences.location) {
+      filters.location = { "$in": [userPreferences.location.toLowerCase()] };
+    }
+    
+    // Determine if we should use filters
+    const useFilters = Object.keys(filters).length > 0;
+    
+    // Query Pinecone with appropriate parameters
+    const queryOptions = {
+      vector: embedding,
+      topK: 20,  // Get more results than needed to allow for post-filtering
+      includeMetadata: true,
+      includeValues: false
+    };
+    
+    // Only add filter if we have valid filters to prevent empty filter object issues
+    if (useFilters) {
+      queryOptions.filter = filters;
+    }
+    
+    console.log("Querying Pinecone with options:", JSON.stringify(queryOptions, null, 2));
+    const queryResponse = await index.query(queryOptions);
+    
+    console.log(`Pinecone returned ${queryResponse.matches.length} matches`);
+    
+    // Enhanced post-processing of results
+    let matches = queryResponse.matches;
+    
+    // Filter out low-quality matches
+    const qualityThreshold = 0.5;  // Adjusted lower to account for expanded role terms
+    matches = matches.filter(match => match.score > qualityThreshold);
+    
+    return matches;
+  } catch (error) {
+    console.error('Error finding matching jobs:', error);
+    return [];
+  }
+}
+
+
 
 // -------------------- Authentication Middleware --------------------
 
@@ -1385,6 +1480,7 @@ app.post('/api/profile', upload.single('resume'), async (req, res) => {
     const careerTransition = isLikelyCareerTransition(expandedCurrentRole, expandedDesiredRole);
     console.log(`Career transition detected: ${careerTransition ? 'YES' : 'NO'}`);
 
+
     // If additionalInfo was provided, query with it
     let additionalInfoMatches = [];
     if (additionalInfoEmbedding) {
@@ -1400,6 +1496,7 @@ app.post('/api/profile', upload.single('resume'), async (req, res) => {
         console.log(`Additional info query returned ${additionalInfoMatches.length} matches`);
       } catch (error) {
         console.error('Error querying Pinecone with additional info:', error);
+
       }
     }
 
@@ -1412,6 +1509,7 @@ app.post('/api/profile', upload.single('resume'), async (req, res) => {
       careerTransition
     );
     
+
     console.log(`After merging, total matches: ${mergedMatches.length}`);
 
     const scoredMatches = applyAdditionalFactors(mergedMatches, userPreferences, careerTransition);
@@ -1420,6 +1518,15 @@ app.post('/api/profile', upload.single('resume'), async (req, res) => {
     // Slice the final matches to only take the top 10
     const finalMatches = scoredMatches.slice(0, 10);
     console.log(`Final matches count (slice(0,10)): ${finalMatches.length}`);
+
+    
+    
+    
+    
+    
+    
+    
+    
     
     finalMatches.forEach((match, idx) => {
       console.log(`Final Match #${idx + 1}: ${match.metadata.job_title} | finalScore=${match.finalScore.toFixed(2)}`);
