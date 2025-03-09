@@ -21,3 +21,17 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+
+/backend/.env
+/ella-vate-frontend/.env.local
+
+/backend/uploads/
+/backend/debug-env
+/backend/env-trace
+/backend/pinecone-troubleshoot
+/backend/test-pinecone
+
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
