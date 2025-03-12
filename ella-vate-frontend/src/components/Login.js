@@ -3,6 +3,31 @@ import { Link, useNavigate } from 'react-router-dom';
 import AuthContext from '../context/AuthContext';
 import './Auth.css';
 
+// Simple logo component directly in this file to avoid import issues
+const ElegantLogo = () => {
+  return (
+    <div className="ella-vate-logo">
+      <div className="logo-circle">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          fill="white"
+          width="18"
+          height="18"
+        >
+          <path
+            d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"
+            strokeWidth="2"
+            stroke="white"
+            fill="none"
+          />
+        </svg>
+      </div>
+      <h1 className="logo-text">Ella-Vate</h1>
+    </div>
+  );
+};
+
 function Login() {
   const [formData, setFormData] = useState({
     email: '',
@@ -32,13 +57,17 @@ function Login() {
   };
   
   return (
-    <div className="auth-container d-flex justify-content-center align-items-center min-vh-100">
-      <div className="auth-form-container bg-white p-4 rounded shadow-sm">
-        <h1 className="text-center">Welcome Back</h1>
-        <p className="auth-subtitle text-center text-muted">Sign in to continue your job search</p>
+    <div className="auth-container">
+      <div className="auth-form-container">
+        <div className="auth-logo-centered">
+          <ElegantLogo />
+        </div>
+        
+        <h1 className="auth-title">Welcome Back</h1>
+        <p className="auth-subtitle">Sign in to continue your job search</p>
         
         <form onSubmit={handleSubmit} className="auth-form">
-          <div className="form-group mb-3">
+          <div className="form-group">
             <label htmlFor="email">Email</label>
             <input
               type="email"
@@ -47,11 +76,12 @@ function Login() {
               className="form-control"
               value={formData.email}
               onChange={handleChange}
+              placeholder="your@email.com"
               required
             />
           </div>
           
-          <div className="form-group mb-3">
+          <div className="form-group">
             <label htmlFor="password">Password</label>
             <input
               type="password"
@@ -60,11 +90,12 @@ function Login() {
               className="form-control"
               value={formData.password}
               onChange={handleChange}
+              placeholder="••••••••"
               required
             />
           </div>
           
-          {error && <p className="text-danger">{error}</p>}
+          {error && <div className="auth-error">{error}</div>}
           
           <button 
             type="submit" 
@@ -75,8 +106,8 @@ function Login() {
           </button>
         </form>
         
-        <p className="auth-redirect text-center mt-3">
-          Don't have an account? <Link to="/register">Sign Up</Link>
+        <p className="auth-redirect">
+          Don't have an account? <Link to="/register" className="signup-link">Sign Up</Link>
         </p>
       </div>
     </div>

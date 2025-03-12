@@ -18,48 +18,52 @@ function CoverLetterGenerator({ job, resumeText }) {
     console.log("Resume text length:", resumeText?.length || 0);
   }, [resumeText]);
 
+  const generateCoverLetter = async () => {
+    if (!currentUser) {
+      navigate('/login');
+      return;
+    }
+    if (!job || !resumeText) {
+      setError('Missing job details or resume text');
+      setIsGenerating(false);
+      return;
+    }
+    
+    setIsGenerating(true);
+    
+    try {
+      setError(null);
+      const token = localStorage.getItem('auth_token');
+      const response = await fetch(API_ENDPOINTS.COVER_LETTER, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          jobId: job.id || '',
+          jobTitle: job.jobTitle,
+          company: job.company,
+          jobDescription: job.description,
+          resumeText: resumeText,
+        }),
+      });
+      
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to generate cover letter');
+      }
+      setCoverLetter(data.coverLetterText);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setIsGenerating(false);
+    }
+  };
+
   // Automatically generate cover letter on mount
   useEffect(() => {
-    const autoGenerate = async () => {
-      if (!currentUser) {
-        navigate('/login');
-        return;
-      }
-      if (!job || !resumeText) {
-        setError('Missing job details or resume text');
-        setIsGenerating(false);
-        return;
-      }
-      try {
-        setError(null);
-        const token = localStorage.getItem('auth_token');
-        const response = await fetch(API_ENDPOINTS.COVER_LETTER, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({
-            jobId: job.id || '',
-            jobTitle: job.jobTitle,
-            company: job.company,
-            jobDescription: job.description,
-            resumeText: resumeText,
-          }),
-        });
-        
-        const data = await response.json();
-        if (!response.ok) {
-          throw new Error(data.error || 'Failed to generate cover letter');
-        }
-        setCoverLetter(data.coverLetterText);
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setIsGenerating(false);
-      }
-    };
-    autoGenerate();
+    generateCoverLetter();
   }, [currentUser, job, resumeText, navigate]);
 
   const handleDownload = () => {
@@ -96,13 +100,11 @@ function CoverLetterGenerator({ job, resumeText }) {
               Download
             </button>
           </div>
-          <div className="cover-letter-actions">
+          {/* Added container to match download button container */}
+          <div className="download-container">
             <button
-              className="btn btn-secondary"
-              onClick={() => {
-                setCoverLetter('');
-                setIsGenerating(true);
-              }}
+              className="btn btn-regenerate"
+              onClick={generateCoverLetter}
             >
               Regenerate
             </button>

@@ -1,61 +1,247 @@
-/* Auth.css - Styles for authentication components */
+/* Auth.css - Elegant styling for authentication pages */
+
+:root {
+  --primary-color: #4f46e5;
+  --primary-light: #e0e7ff;
+  --primary-hover: #4338ca;
+  --light-bg: #f5f7fa;
+  --white: #ffffff;
+  --text-dark: #1f2937;
+  --text-muted: #6b7280;
+  --border-color: #e5e7eb;
+  --input-focus: #e0e7ff;
+  --danger-color: #ef4444;
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --card-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 10px 10px -5px rgba(0, 0, 0, 0.02);
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background-color: var(--light-bg);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  color: var(--text-dark);
+  height: 100vh;
+  line-height: 1.5;
+}
 
 .auth-container {
   display: flex;
   justify-content: center;
   align-items: center;
   min-height: 100vh;
-  padding: 40px 20px;
+  background: linear-gradient(135deg, #f0f4ff 0%, #e9eeff 100%);
+  padding: 20px;
 }
 
 .auth-form-container {
-  background-color: white;
-  border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  padding: 30px;
+  background-color: var(--white);
+  border-radius: 12px;
+  box-shadow: var(--card-shadow);
+  padding: 40px;
   width: 100%;
-  max-width: 450px;
+  max-width: 420px;
+  margin: 20px auto;
+  position: relative;
+  overflow: hidden;
 }
 
-.auth-form-container h1 {
-  font-size: 24px;
-  margin-bottom: 10px;
+/* Create subtle pattern in background */
+.auth-form-container::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 6px;
+  background: linear-gradient(90deg, var(--primary-color), #6366f1);
+}
+
+/* Logo styling with animation */
+.auth-logo-centered {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 28px;
+  transition: transform 0.3s ease;
+}
+
+.auth-logo-centered:hover {
+  transform: scale(1.05);
+}
+
+/* Improve the EllVateLogo */
+.ella-vate-logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+}
+
+.logo-circle {
+  width: 40px;
+  height: 40px;
+  background: linear-gradient(135deg, #5e48e8, #4338ca);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 10px rgba(79, 70, 229, 0.2);
+}
+
+.logo-text {
+  font-size: 22px;
+  font-weight: 700;
+  background: linear-gradient(135deg, #5e48e8, #6366f1);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin: 0;
+}
+
+.auth-title {
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--text-dark);
+  margin-bottom: 8px;
   text-align: center;
 }
 
 .auth-subtitle {
-  color: #6c757d;
+  font-size: 16px;
+  color: var(--text-muted);
   text-align: center;
-  margin-bottom: 25px;
+  margin-bottom: 32px;
+  margin-top: 0;
 }
 
 .auth-form {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
+  margin-bottom: 20px;
 }
 
-.auth-form .form-group {
-  margin-bottom: 15px;
+.form-group {
+  margin-bottom: 24px;
 }
 
-.auth-form .btn-submit {
-  margin-top: 10px;
+.form-group label {
+  display: block;
+  font-weight: 500;
+  margin-bottom: 8px;
+  color: var(--text-dark);
+  font-size: 15px;
 }
 
-.auth-redirect {
-  margin-top: 20px;
+.form-control {
+  width: 100%;
+  padding: 12px 16px;
+  font-size: 15px;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  background-color: var(--white);
+  box-sizing: border-box;
+  transition: all 0.2s ease;
+}
+
+.form-control:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+}
+
+.btn {
+  font-weight: 600;
   text-align: center;
-  font-size: 14px;
-  color: #6c757d;
+  white-space: nowrap;
+  vertical-align: middle;
+  user-select: none;
+  border: 1px solid transparent;
+  padding: 12px 20px;
+  font-size: 16px;
+  line-height: 1.5;
+  border-radius: 8px;
+  transition: all 0.2s ease-in-out;
+  cursor: pointer;
 }
 
-.auth-redirect a {
-  color: #007bff;
-  text-decoration: none;
+.btn-primary {
+  color: var(--white);
+  background: linear-gradient(135deg, #5e48e8, #4338ca);
+  border-color: transparent;
+  box-shadow: 0 4px 10px rgba(79, 70, 229, 0.2);
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: linear-gradient(135deg, #6955f0, #4f46e5);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 15px rgba(79, 70, 229, 0.25);
+}
+
+.btn-primary:active:not(:disabled) {
+  transform: translateY(0);
+  box-shadow: 0 2px 5px rgba(79, 70, 229, 0.15);
+}
+
+.btn-primary:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.w-100 {
+  width: 100%;
+}
+
+.text-danger {
+  color: var(--danger-color);
+  font-size: 14px;
+  margin-top: 0;
+  margin-bottom: 16px;
+  display: block;
   font-weight: 500;
 }
 
+.auth-redirect {
+  margin-top: 24px;
+  text-align: center;
+  font-size: 15px;
+  color: var(--text-muted);
+}
+
+.auth-redirect a {
+  color: var(--primary-color);
+  text-decoration: none;
+  font-weight: 600;
+  transition: color 0.2s ease;
+}
+
+.signup-link {
+  color: var(--primary-color);
+}
+
 .auth-redirect a:hover {
+  color: var(--primary-hover);
   text-decoration: underline;
+}
+
+/* Error message styling */
+.auth-error {
+  background-color: rgba(239, 68, 68, 0.05);
+  color: var(--danger-color);
+  padding: 10px;
+  border-radius: 6px;
+  margin-bottom: 16px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+/* Responsive adjustments */
+@media (max-width: 480px) {
+  .auth-form-container {
+    padding: 30px 20px;
+    margin: 10px;
+  }
+  
+  .auth-title {
+    font-size: 24px;
+  }
 }

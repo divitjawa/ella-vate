@@ -84,16 +84,42 @@ const userSchema = new mongoose.Schema({
 });
 const User = mongoose.model('User', userSchema);
 
-// Initialize OpenAI client
+// Initialize OpenAI client with timeout protection
 let openai;
+const OPENAI_INIT_TIMEOUT = 10000; // 10 seconds
+let openaiInitTimeout;
+
 try {
   if (!process.env.OPENAI_API_KEY) {
     console.error('OPENAI_API_KEY is missing. Check your .env file.');
   } else {
     console.log('Initializing OpenAI with API key');
-    openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+    openaiInitTimeout = setTimeout(() => {
+      console.warn('Warning: OpenAI initialization timeout - continuing without waiting');
+    }, OPENAI_INIT_TIMEOUT);
+    
+    // Create client without waiting for validation
+    openai = new OpenAI({ 
+      apiKey: process.env.OPENAI_API_KEY,
+      timeout: 30000, // 30 second timeout for requests
+    });
+    
+    console.log('OpenAI client initialized (connection not verified)');
+    clearTimeout(openaiInitTimeout);
+    
+    // Test connection in background without blocking startup
+    setTimeout(async () => {
+      try {
+        const models = await openai.models.list();
+        console.log('OpenAI connection test successful - available models count:', models.data.length);
+      } catch (error) {
+        console.error('OpenAI connection test failed:', error.message);
+        // We continue anyway - the server shouldn't crash if OpenAI is unavailable
+      }
+    }, 100);
   }
 } catch (error) {
+  if (openaiInitTimeout) clearTimeout(openaiInitTimeout);
   console.error('Error initializing OpenAI client:', error);
 }
 
@@ -122,6 +148,89 @@ try {
 }
 
 // -------------------- Helper Functions --------------------
+/**
+ * Optimize prompt size to reduce API processing time.
+ */
+function optimizePromptSize(jobDescription, resumeText) {
+  const maxJobDescLength = 1500;
+  const maxResumeLength = 2000;
+  
+  let truncatedJobDesc = jobDescription;
+  if (jobDescription && jobDescription.length > maxJobDescLength) {
+    truncatedJobDesc = jobDescription.substring(0, maxJobDescLength) + 
+      "... [Additional details omitted for brevity]";
+  }
+  
+  let truncatedResume = resumeText;
+  if (resumeText && resumeText.length > maxResumeLength) {
+    truncatedResume = resumeText.substring(0, maxResumeLength) + 
+      "... [Additional details omitted for brevity]";
+  }
+  
+  return { truncatedJobDesc, truncatedResume };
+}
+
+/**
+ * Generate a cover letter with retry logic and model fallback.
+ */
+async function generateCoverLetterWithRetry(prompt, model = 'gpt-4o') {
+  const maxRetries = 2;
+  const models = ['gpt-4o', 'gpt-3.5-turbo'];
+  let currentModelIndex = models.indexOf(model);
+  
+  if (currentModelIndex === -1) currentModelIndex = 0;
+  
+  for (let modelIndex = currentModelIndex; modelIndex < models.length; modelIndex++) {
+    const currentModel = models[modelIndex];
+    
+    for (let attempt = 1; attempt <= maxRetries; attempt++) {
+      try {
+        console.log(`Attempt ${attempt} using model ${currentModel}`);
+        
+        const completion = await openai.chat.completions.create({
+          model: currentModel,
+          messages: [
+            {
+              role: 'system',
+              content: "You are an expert career advisor who specializes in writing compelling cover letters that highlight a candidate's relevant qualifications."
+            },
+            {
+              role: 'user',
+              content: prompt
+            }
+          ],
+          temperature: 0.7,
+          max_tokens: 1000
+        });
+        
+        console.log(`Successfully generated cover letter using ${currentModel}`);
+        return completion.choices[0].message.content;
+      } catch (error) {
+        console.error(`Attempt ${attempt} with ${currentModel} failed:`, error.message);
+        
+        // If we haven't reached max retries for this model yet, try again
+        if (attempt < maxRetries) {
+          const backoffDelay = 2000 * Math.pow(2, attempt - 1); // Exponential backoff
+          console.log(`Retrying with ${currentModel} in ${backoffDelay}ms...`);
+          await new Promise(resolve => setTimeout(resolve, backoffDelay));
+        } 
+        // If we've exhausted retries for this model but have more models to try
+        else if (modelIndex < models.length - 1) {
+          console.log(`Switching from ${currentModel} to ${models[modelIndex + 1]}`);
+          break; // Break inner loop to move to next model
+        } 
+        // If we've exhausted all models and their retries
+        else {
+          console.error('All models and retries exhausted');
+          throw error;
+        }
+      }
+    }
+  }
+  
+  // This should not be reached due to the throw above, but as a safety measure
+  throw new Error('Failed to generate cover letter with all available models');
+}
 
 /**
  * Expand common professional acronyms to full forms.
@@ -511,10 +620,6 @@ function calculateMatchStats(matches) {
 }
 
 /**
- * Merge resume-based and desired role–based matches and calculate an initial final score.
- */
-
-/**
  * Format posted date to a more reader-friendly format.
  */
 function formatPostedDate(dateString) {
@@ -778,12 +883,6 @@ function generateFallbackJobMatches(userPreferences = {}) {
   ];
 }
 
-// Step 1: Remove the duplicate getMatchQualityDescription function
-// You have two identical functions in your code - remove the second one
-
-// Step 2: Add the findMatchingJobs function right after the generateFallbackJobMatches function
-// and before the Authentication Middleware section:
-
 /**
  * Find matching jobs using Pinecone.
  */
@@ -867,8 +966,6 @@ async function findMatchingJobs(embedding, userPreferences = {}) {
     return [];
   }
 }
-
-
 
 // -------------------- Authentication Middleware --------------------
 
@@ -1140,28 +1237,39 @@ app.get('/api/saved-jobs', authenticateToken, async (req, res) => {
 });
 
 // Generate Cover Letter Endpoint
+// Generate Cover Letter Endpoint
 app.post('/api/generate-cover-letter', authenticateToken, async (req, res) => {
   try {
+    console.log('Cover letter generation endpoint called');
     const { jobId, jobTitle, company, jobDescription, resumeText } = req.body;
     
     if (!jobTitle || !company || !jobDescription || !resumeText) {
+      console.log('Missing required fields for cover letter generation:', { 
+        hasJobTitle: !!jobTitle, 
+        hasCompany: !!company, 
+        hasJobDescription: !!jobDescription?.length, 
+        hasResumeText: !!resumeText?.length 
+      });
       return res.status(400).json({ error: 'Missing required fields' });
     }
+    
+    console.log(`Generating cover letter for ${jobTitle} at ${company}`);
+    console.log(`OpenAI client initialized: ${!!openai}`);
     
     if (!openai) {
       console.log('OpenAI not configured, using mock cover letter');
       const mockCoverLetter = `
-Dear Hiring Manager,
+To the ${company} Team,
 
-I am writing to express my interest in the ${jobTitle} position at ${company}. With my background in machine learning and data science, I believe I am well-suited for this role.
+I am writing to express my interest in the ${jobTitle} position at ${company}. With my background and relevant experience, I believe I am well-suited for this role.
 
-My experience includes developing and deploying machine learning models, working with large datasets, and implementing natural language processing solutions. I am proficient in Python, TensorFlow, and PyTorch, and have experience with cloud platforms such as AWS and Google Cloud.
+My experience includes developing and implementing effective solutions, analyzing data, and collaborating with cross-functional teams. I have consistently delivered results, including improving processes by 15% and contributing to key projects that drove business outcomes.
 
-In my current role as a Software Engineer, I have led several projects that involved machine learning components, including a recommendation system that increased user engagement by 25%. I am particularly interested in joining ${company} because of your innovative work in artificial intelligence and commitment to solving real-world problems with technology.
+I am particularly excited about joining ${company} because of your innovative approach and commitment to excellence in your industry. What motivates me about this role is the opportunity to apply my skills to new challenges while continuing to grow professionally.
 
-I am excited about the opportunity to contribute to your team and help advance your mission. Thank you for considering my application.
+I would welcome the chance to discuss how my background aligns with your needs. Thank you for considering my application.
 
-Sincerely,
+Best,
 [Your Name]
 `;
       
@@ -1187,63 +1295,82 @@ Sincerely,
       return res.json({ coverLetterText: mockCoverLetter });
     }
     
-    // Generate cover letter using OpenAI
+    // Optimize the prompt size to reduce processing time
+    const { truncatedJobDesc, truncatedResume } = optimizePromptSize(jobDescription, resumeText);
+    
+    // Generate cover letter using OpenAI with optimized prompt
     const prompt = `
-      Create a professional and personalized cover letter for a ${jobTitle} position at ${company}.
-      
-      Here is the job description:
-      ${jobDescription}
-      
-      Here is my resume:
-      ${resumeText}
-      
-      The cover letter should:
-      1. Be professionally formatted with my contact information at the top
-      2. Address the key requirements in the job description
-      3. Highlight relevant experience and skills from my resume
-      4. Show enthusiasm for the role and company
-      5. Include a strong closing paragraph
-      6. Be approximately 400 words
+      Create a personalized and authentic cover letter for a ${jobTitle} position at ${company} that is ready to use immediately without any further editing needed.
+
+      Use this job description as reference:
+      ${truncatedJobDesc}
+
+      And incorporate relevant experience from my resume:
+      ${truncatedResume}
+
+      Please follow these guidelines to make the letter genuine, conversational, and complete:
+      1. Start with a personalized greeting - if no specific hiring manager name is available, use the company name plus "Team" ex "To the Costco Team" or "To the Walmart Team"
+      2. Begin with a compelling opening that shows genuine interest in this specific company and position
+      3. Share a brief personal connection to the company's mission or values when possible (e.g., "As someone passionate about right-to-repair...")
+      4. Highlight 2-3 specific achievements from my experience with concrete metrics from the resume (e.g., "reduced redundant communications by 20%")
+      5. Connect my specific skills to the company's specific needs using natural language rather than keyword matching
+      6. Include personal voice elements like "I am particularly excited about..." or "What motivates me about this role is..."
+      7. Use varied sentence structures with some longer, detailed sentences and some shorter ones for emphasis
+      8. Include a forward-looking closing paragraph that expresses enthusiasm for discussing the role further
+      9. End with a professional sign-off (like "Best," or "Sincerely,") followed by my name
+      10. Keep the overall length to approximately 400 words and maintain a warm, professional tone throughout
+
+      Important requirements:
+      - Do NOT include any placeholders, bracketed text, or notes for the applicant to fill in later
+      - If my qualifications seem mismatched with the job requirements, focus on my enthusiasm for the company
+      - Only mention skills and experiences actually present in my resume
+      - Produce a final, polished letter that requires zero additional work before submission
     `;
     
-    const completion = await openai.chat.completions.create({
-      model: 'gpt-3.5-turbo',
-      messages: [
-        {
-          role: 'system',
-          content: "You are an expert career advisor who specializes in writing compelling cover letters that highlight a candidate's relevant qualifications."
-        },
-        {
-          role: 'user',
-          content: prompt
+    console.log('Calling OpenAI API for cover letter generation...');
+    
+    try {
+      // Use the retry function for more robust generation
+      const coverLetterText = await generateCoverLetterWithRetry(prompt);
+      console.log('OpenAI API call successful');
+      
+      // Save the cover letter to user's profile if jobId is provided and MongoDB is connected
+      if (jobId && mongoose.connection.readyState === 1) {
+        const user = await User.findById(req.user.id);
+        if (user) {
+          user.generatedCoverLetters.push({
+            jobId,
+            jobTitle,
+            company,
+            coverLetterText,
+            generatedAt: new Date()
+          });
+          
+          await user.save();
         }
-      ],
-      temperature: 0.7,
-      max_tokens: 1000
-    });
-    
-    const coverLetterText = completion.choices[0].message.content;
-    
-    // Save the cover letter to user's profile if jobId is provided and MongoDB is connected
-    if (jobId && mongoose.connection.readyState === 1) {
-      const user = await User.findById(req.user.id);
-      if (user) {
-        user.generatedCoverLetters.push({
-          jobId,
-          jobTitle,
-          company,
-          coverLetterText,
-          generatedAt: new Date()
-        });
-        
-        await user.save();
       }
+      
+      res.json({ coverLetterText });
+    } catch (openaiError) {
+      console.error('OpenAI API error:', openaiError);
+      console.error('Error details:', openaiError.response?.data || openaiError.message);
+      
+      // Use a fallback cover letter if all attempts failed
+      const mockCoverLetter = `
+To the ${company} Team,
+
+I am writing to express my interest in the ${jobTitle} position at ${company}. With my background and relevant experience, I believe I am well-suited for this role.
+
+[Note: Our cover letter service is experiencing high demand right now. Please try again in a few minutes.]
+
+Best,
+[Your Name]
+`;
+      return res.json({ coverLetterText: mockCoverLetter, fallback: true });
     }
-    
-    res.json({ coverLetterText });
   } catch (error) {
     console.error('Cover letter generation error:', error);
-    res.status(500).json({ error: 'Error generating cover letter' });
+    res.status(500).json({ error: 'Error generating cover letter: ' + error.message });
   }
 });
 
@@ -1519,15 +1646,6 @@ app.post('/api/profile', upload.single('resume'), async (req, res) => {
     const finalMatches = scoredMatches.slice(0, 10);
     console.log(`Final matches count (slice(0,10)): ${finalMatches.length}`);
 
-    
-    
-    
-    
-    
-    
-    
-    
-    
     finalMatches.forEach((match, idx) => {
       console.log(`Final Match #${idx + 1}: ${match.metadata.job_title} | finalScore=${match.finalScore.toFixed(2)}`);
     });
@@ -1574,9 +1692,6 @@ app.post('/api/profile', upload.single('resume'), async (req, res) => {
       embeddingMethod,
       matchStats: calculateMatchStats(finalMatches)
     });
-
-
-
     
   } catch (error) {
     console.error('Error processing profile:', error);
@@ -1657,6 +1772,7 @@ app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
   console.log(`CORS is configured to allow requests from ${process.env.FRONTEND_URL || 'http://localhost:3000'}`);
   console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
+  console.log('Server initialization complete. Ready to accept requests.');
 });
 
 // Test Pinecone Connection
