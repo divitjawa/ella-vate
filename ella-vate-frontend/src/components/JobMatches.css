@@ -409,8 +409,10 @@
 
 .btn-save:hover {
   background-color: var(--btn-save-hover);
+  color: white; /* FIXED: Ensure text stays white */
 }
 
+/* FIXED: Keep Details button text white on hover */
 .btn-details {
   background-color: var(--btn-details);
   color: white;
@@ -418,6 +420,7 @@
 
 .btn-details:hover {
   background-color: var(--btn-details-hover);
+  color: white; /* FIXED: Keep text white on hover */
 }
 
 .btn-details.active {
@@ -431,15 +434,18 @@
 
 .btn-apply:hover {
   background-color: var(--btn-apply-hover);
+  color: white; /* FIXED: Ensure text stays white */
 }
 
 .btn-generate-letter {
   background-color: var(--btn-details);
   margin-top: 0.75rem;
+  color: white;
 }
 
 .btn-generate-letter:hover {
   background-color: var(--btn-details-hover);
+  color: white; /* FIXED: Ensure text stays white */
 }
 
 /* Job Details Panel */
@@ -489,8 +495,8 @@
 .match-quality {
   padding: 0.35rem 0.75rem;
   display: inline-block;
-  background: var(--primary-light);
-  color: var(--primary-color);
+  background: #7359e9; /* Purple background matching your screenshot */
+  color: white; /* White text */
   border-radius: 2rem;
   font-size: 0.75rem;
   font-weight: 600;
@@ -503,13 +509,13 @@
   margin: 0;
 }
 
-/* Match reason highlight */
+/* FIXED: Match reason highlight with improved contrast */
 .match-reason {
   font-size: 0.95rem;
   line-height: 1.6;
-  color: var(--primary-color);
+  color: white; /* FIXED: Changed to white for better visibility */
   font-weight: 500;
-  background-color: var(--primary-light);
+  background-color: var(--primary-color); /* FIXED: Darker background for better contrast */
   padding: 0.75rem;
   border-radius: var(--radius-md);
   margin-top: 0.5rem;
@@ -587,6 +593,20 @@
   max-width: 400px;
   margin: 0;
   line-height: 1.6;
+}
+
+/* Error container */
+.error-container {
+  padding: 1rem;
+  border-radius: var(--radius-md);
+  background-color: #fee2e2;
+  border: 1px solid #ef4444;
+  margin: 1rem 0;
+}
+
+.error-message {
+  color: #b91c1c;
+  margin-bottom: 1rem;
 }
 
 /* Animations */

@@ -3,6 +3,30 @@ import { Link, useNavigate } from 'react-router-dom';
 import AuthContext from '../context/AuthContext';
 import './Header.css';
 
+// EllaVateLogo component
+const EllaVateLogo = () => {
+  return (
+    <div className="ella-vate-logo">
+      <div className="logo-circle">
+        <svg 
+          xmlns="http://www.w3.org/2000/svg" 
+          viewBox="0 0 24 24" 
+          fill="white" 
+          className="logo-icon"
+        >
+          <path 
+            d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" 
+            strokeWidth="2"
+            stroke="white"
+            fill="none"
+          />
+        </svg>
+      </div>
+      <h1 className="logo-text">Ella-Vate</h1>
+    </div>
+  );
+};
+
 function Header() {
   const { currentUser, logout } = useContext(AuthContext);
   const navigate = useNavigate();
@@ -13,23 +37,22 @@ function Header() {
   };
   
   return (
-    <header className="header bg-light shadow-sm">
-      <div className="container d-flex justify-content-between align-items-center py-2">
-        <Link to="/" className="navbar-brand">
-          <div className="logo-circle bg-primary"></div>
-          <span>Ella-Vate</span>
+    <header className="header">
+      <div className="header-container container">
+        <Link to="/" className="logo">
+          <EllaVateLogo />
         </Link>
         
         <nav className="nav">
-          <ul className="nav">
-            <li className="nav-item"><Link to="/" className="nav-link">Our Product</Link></li>
+          <ul>
+            <li><Link to="/about">About</Link></li>
             {currentUser && (
               <>
-                <li className="nav-item"><Link to="/dashboard" className="nav-link">Dashboard</Link></li>
-                <li className="nav-item"><Link to="/saved-jobs" className="nav-link">Saved Jobs</Link></li>
+                <li><Link to="/">New Search</Link></li>
+                <li><Link to="/matches">Job Matches</Link></li>
+                <li><Link to="/saved-jobs">Saved Jobs</Link></li>
               </>
             )}
-            <li className="nav-item"><Link to="/about" className="nav-link">About</Link></li>
           </ul>
         </nav>
         
@@ -43,4 +66,5 @@ function Header() {
   );
 }
 
+export { EllaVateLogo };
 export default Header;

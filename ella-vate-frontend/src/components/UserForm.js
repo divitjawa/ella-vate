@@ -3,6 +3,30 @@ import { useNavigate } from 'react-router-dom';
 import AuthContext from '../context/AuthContext';
 import './UserForm.css';
 
+// Added Logo component
+const EllaVateLogo = () => {
+  return (
+    <div className="ella-vate-logo">
+      <div className="logo-circle">
+        <svg 
+          xmlns="http://www.w3.org/2000/svg" 
+          viewBox="0 0 24 24" 
+          fill="white" 
+          className="logo-icon"
+        >
+          <path 
+            d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" 
+            strokeWidth="2"
+            stroke="white"
+            fill="none"
+          />
+        </svg>
+      </div>
+      <h1 className="logo-text">Ella-Vate</h1>
+    </div>
+  );
+};
+
 function UserForm({ onSubmit, isLoading, error }) {
   const navigate = useNavigate();
   const { currentUser } = useContext(AuthContext);
@@ -95,7 +119,7 @@ function UserForm({ onSubmit, isLoading, error }) {
   return (
     <div className="user-form-container">
       <h1>Launch Your Career to New Heights</h1>
-      <p className="subtitle">Over 2 million professionals found their perfect job match on Ella-Vate last year</p>
+      <p className="subtitle">Professionals worldwide found their perfect career match on Ella-Vate.</p>
       
       <form onSubmit={handleSubmit} className="user-form">
         {!currentUser && (
@@ -186,4 +210,6 @@ function UserForm({ onSubmit, isLoading, error }) {
   );
 }
 
+// Export both components
+export { EllaVateLogo };
 export default UserForm;

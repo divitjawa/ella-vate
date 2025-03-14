@@ -18,20 +18,18 @@
 .env.test.local
 .env.production.local
 
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-
-
+# Environment files
 /backend/.env
 /ella-vate-frontend/.env.local
 
+# Backend specific files
 /backend/uploads/
-/backend/debug-env
-/backend/env-trace
-/backend/pinecone-troubleshoot
-/backend/test-pinecone
+/backend/debug-env.js
+/backend/env-trace.js
+/backend/pinecone-troubleshoot.js
+/backend/test-pinecone.js
 
+# Logs
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
