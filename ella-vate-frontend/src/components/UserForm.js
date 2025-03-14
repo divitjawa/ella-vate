@@ -6,7 +6,7 @@ import './UserForm.css';
 // Added Logo component
 const EllaVateLogo = () => {
   return (
-    <div className="ella-vate-logo">
+    <div className="logo-1536">
       <div className="logo-circle">
         <svg 
           xmlns="http://www.w3.org/2000/svg" 
@@ -22,7 +22,7 @@ const EllaVateLogo = () => {
           />
         </svg>
       </div>
-      <h1 className="logo-text">Ella-Vate</h1>
+      <h1 className="logo-text">1536</h1>
     </div>
   );
 };
@@ -119,7 +119,7 @@ function UserForm({ onSubmit, isLoading, error }) {
   return (
     <div className="user-form-container">
       <h1>Launch Your Career to New Heights</h1>
-      <p className="subtitle">Professionals worldwide found their perfect career match on Ella-Vate.</p>
+      <p className="subtitle">Professionals worldwide found their perfect career match on 1536.</p>
       
       <form onSubmit={handleSubmit} className="user-form">
         {!currentUser && (

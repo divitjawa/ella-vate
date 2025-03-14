@@ -1,15 +1,25 @@
 /* Header.css */
+:root {
+  --primary-color: #4f46e5;
+  --text-color: #333;
+}
 
 .header {
   background-color: white;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  padding: 15px 0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+  padding: 12px 0;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
 }
 
 .header-container {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
 }
 
 /* Updated Logo Styling */
@@ -20,30 +30,31 @@
   color: var(--text-color);
 }
 
-/* Ella-Vate Logo Component Styling */
-.ella-vate-logo {
+/* 1536 Logo Component Styling */
+.logo-1536 {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
 }
 
 .logo-circle {
-  width: 30px;
-  height: 30px;
-  background-color: #3b82f6;
+  width: 36px;
+  height: 36px;
+  background: linear-gradient(135deg, #5e48e8, #3b82f6);
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
+  box-shadow: 0 2px 6px rgba(94, 72, 232, 0.2);
 }
 
 .logo-icon {
-  width: 18px;
-  height: 18px;
+  width: 20px;
+  height: 20px;
 }
 
 .logo-text {
-  font-size: 20px;
+  font-size: 22px;
   font-weight: 800;
   background: linear-gradient(135deg, #5e48e8, #3b82f6);
   -webkit-background-clip: text;
@@ -51,6 +62,12 @@
   -webkit-text-fill-color: transparent;
   margin: 0;
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.nav {
+  flex: 1;
+  display: flex;
+  justify-content: center;
 }
 
 .nav ul {
@@ -61,18 +78,36 @@
 }
 
 .nav ul li {
-  margin-left: 30px;
+  margin: 0 18px;
 }
 
 .nav ul li a {
   text-decoration: none;
   color: var(--text-color);
   font-weight: 500;
+  font-size: 16px;
   transition: color 0.3s ease;
+  padding: 5px 0;
+  position: relative;
 }
 
 .nav ul li a:hover {
   color: var(--primary-color);
+}
+
+.nav ul li a::after {
+  content: '';
+  position: absolute;
+  width: 0;
+  height: 2px;
+  bottom: 0;
+  left: 0;
+  background-color: var(--primary-color);
+  transition: width 0.3s ease;
+}
+
+.nav ul li a:hover::after {
+  width: 100%;
 }
 
 /* Button styling from original file */
@@ -84,7 +119,7 @@
   vertical-align: middle;
   user-select: none;
   border: 1px solid transparent;
-  padding: 0.5rem 1rem;
+  padding: 0.5rem 1.2rem;
   font-size: 1rem;
   line-height: 1.5;
   border-radius: 0.5rem;
@@ -114,21 +149,36 @@
 
 /* Responsive styles */
 @media (max-width: 768px) {
+  .header-container {
+    flex-wrap: wrap;
+  }
+  
+  .nav {
+    order: 3;
+    width: 100%;
+    margin-top: 15px;
+  }
+  
+  .nav ul {
+    justify-content: space-between;
+    width: 100%;
+  }
+  
   .nav ul li {
-    margin-left: 15px;
+    margin: 0 10px;
   }
 
   .logo-circle {
-    width: 25px;
-    height: 25px;
+    width: 32px;
+    height: 32px;
   }
 
   .logo-icon {
-    width: 15px;
-    height: 15px;
+    width: 18px;
+    height: 18px;
   }
 
   .logo-text {
-    font-size: 18px;
+    font-size: 20px;
   }
 }

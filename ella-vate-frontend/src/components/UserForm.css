@@ -24,7 +24,7 @@ body {
 }
 
 /* Logo Styling */
-.ella-vate-logo {
+.logo-1536 {
   display: flex;
   align-items: center;
   gap: 12px;
@@ -280,7 +280,7 @@ body {
   }
 
   /* Responsive logo adjustments */
-  .ella-vate-logo {
+  .logo-1536 {
     gap: 8px;
   }
 
