@@ -1421,6 +1421,7 @@ app.post('/api/expand-acronym', (req, res) => {
 });
 
 // Main Profile Submission and Job Matching Endpoint
+// Main Profile Submission and Job Matching Endpoint
 app.post('/api/profile', upload.single('resume'), async (req, res) => {
   try {
     console.log('Process profile request received');
@@ -1599,8 +1600,6 @@ app.post('/api/profile', upload.single('resume'), async (req, res) => {
         fallback: true,
         matchStats: calculateMatchStats(fallbackJobs)
       });
-
-      console.log('Sending response with resume text length:', userProfile.resumeText ? userProfile.resumeText.length : 0);
     }
 
     // Merge resume and role matches, then calculate dual scores
@@ -1623,7 +1622,6 @@ app.post('/api/profile', upload.single('resume'), async (req, res) => {
         console.log(`Additional info query returned ${additionalInfoMatches.length} matches`);
       } catch (error) {
         console.error('Error querying Pinecone with additional info:', error);
-
       }
     }
 
@@ -1636,11 +1634,23 @@ app.post('/api/profile', upload.single('resume'), async (req, res) => {
       careerTransition
     );
     
-
     console.log(`After merging, total matches: ${mergedMatches.length}`);
 
     const scoredMatches = applyAdditionalFactors(mergedMatches, userPreferences, careerTransition);
     console.log(`After applying additional factors, total matches: ${scoredMatches.length}`);
+
+    // Add secondary sort by date for jobs with the same score
+    scoredMatches.sort((a, b) => {
+      // First sort by finalScore (highest first)
+      if (b.finalScore !== a.finalScore) {
+        return b.finalScore - a.finalScore;
+      }
+      
+      // If scores are equal, sort by date (newest first)
+      const dateA = a.metadata?.posted_at ? new Date(a.metadata.posted_at) : new Date(0);
+      const dateB = b.metadata?.posted_at ? new Date(b.metadata.posted_at) : new Date(0);
+      return dateB - dateA;
+    });
 
     // Slice the final matches to only take the top 10
     const finalMatches = scoredMatches.slice(0, 10);
@@ -1663,32 +1673,45 @@ app.post('/api/profile', upload.single('resume'), async (req, res) => {
           }
         }, null, 2));
         
+        // Handle job descriptions that might be split across multiple parts
+        let description = match.metadata?.description || match.metadata?.job_description || '';
+        if (match.metadata?.job_description_parts) {
+          const parts = parseInt(match.metadata.job_description_parts);
+          let fullDescription = '';
+          
+          // Concatenate all parts
+          for (let i = 1; i <= parts; i++) {
+            const partKey = `job_description_part${i}`;
+            if (match.metadata[partKey]) {
+              fullDescription += match.metadata[partKey];
+            }
+          }
+          
+          // Use concatenated description if available
+          if (fullDescription) {
+            description = fullDescription;
+          }
+        }
+        
         return {
           id: match.id,
           jobTitle: match.metadata?.title || match.metadata?.job_title || 'Untitled Position',
           company: match.metadata?.company || match.metadata?.company_name || 'Unknown Company',
           location: match.metadata?.location || 'Multiple Locations',
-          // Replace employmentType with remote status
           remote: match.metadata?.remote || 'Not Specified',
           salary: match.metadata?.salary || match.metadata?.salary_range || 'Not Specified',
           applyLink: match.metadata?.job_apply_link || match.metadata?.url || '#',
-          description: match.metadata?.description || match.metadata?.job_description || '',
-          // Format the date in a more readable way
+          description: description,
           postedDate: formatPostedDate(match.metadata?.posted_at || match.metadata?.posted_date),
-          // Update scores to ensure consistency
           matchScore: Math.round(match.finalScore * 100) / 100,
           skillsMatch: Math.round(match.backgroundMatchScore * 100) / 100, 
           roleRelevance: Math.round(match.goalMatchScore * 100) / 100,
           matchQuality: getMatchQualityDescription(match, careerTransition),
           isCareerTransition: careerTransition,
-          // Improve match explanation
           matchExplanation: generateMatchExplanation(match, careerTransition, expandedCurrentRole, expandedDesiredRole),
-          // Create a better matched with message
           matchReason: getMatchReason(match, careerTransition, expandedCurrentRole, expandedDesiredRole),
         };
-      
       }),
-
       embeddingMethod,
       matchStats: calculateMatchStats(finalMatches)
     });
@@ -1698,6 +1721,9 @@ app.post('/api/profile', upload.single('resume'), async (req, res) => {
     res.status(500).json({ error: 'Error processing profile: ' + error.message });
   }
 });
+
+
+
 
 // Pinecone Health Check Endpoint
 app.get('/api/pinecone-health', async (req, res) => {
