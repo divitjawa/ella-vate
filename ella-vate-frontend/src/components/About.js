@@ -5,14 +5,14 @@ function About() {
   return (
     <div className="about-container">
       <div className="about-header">
-        <h1>About Ella-Vate</h1>
+        <h1>About 1536</h1>
         <p className="about-tagline">Elevating your career through AI-powered job matching</p>
       </div>
 
       <section className="about-section">
         <h2>Our Mission</h2>
         <p>
-          Ella-Vate is an AI-driven job matching platform that transforms the traditional job search process by leveraging 
+          1536 is an AI-driven job matching platform that transforms the traditional job search process by leveraging 
           semantic matching, natural language processing, and automated resume optimization. Unlike conventional job boards 
           that rely on simple keyword matching, our platform provides personalized job recommendations based on candidates' 
           actual qualifications and potential, while automating resume customization and cover letter generation.
@@ -20,7 +20,7 @@ function About() {
       </section>
 
       <section className="about-section">
-        <h2>How Ella-Vate Works</h2>
+        <h2>How 1536 Works</h2>
         <div className="features-grid">
           <div className="feature-card">
             <div className="feature-icon">📊</div>
@@ -49,9 +49,9 @@ function About() {
       </section>
 
       <section className="about-section">
-        <h2>Technology Behind Ella-Vate</h2>
+        <h2>Technology Behind 1536</h2>
         <p>
-          Ella-Vate combines several cutting-edge technologies to deliver accurate and personalized job matches:
+          1536 combines several cutting-edge technologies to deliver accurate and personalized job matches:
         </p>
         <ul className="tech-list">
           <li>
@@ -82,7 +82,7 @@ function About() {
           <li>The lack of personalized feedback on job compatibility</li>
         </ul>
         <p>
-          By tackling these challenges, Ella-Vate streamlines the entire job search workflow into one intelligent platform.
+          By tackling these challenges, 1536 streamlines the entire job search workflow into one intelligent platform.
         </p>
       </section>
 

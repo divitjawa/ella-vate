@@ -3,10 +3,10 @@ import { Link, useNavigate } from 'react-router-dom';
 import AuthContext from '../context/AuthContext';
 import './Header.css';
 
-// EllaVateLogo component
-const EllaVateLogo = () => {
+// 1536Logo component (renamed from EllaVateLogo)
+const Logo1536 = () => {
   return (
-    <div className="ella-vate-logo">
+    <div className="logo-1536">
       <div className="logo-circle">
         <svg 
           xmlns="http://www.w3.org/2000/svg" 
@@ -22,7 +22,7 @@ const EllaVateLogo = () => {
           />
         </svg>
       </div>
-      <h1 className="logo-text">Ella-Vate</h1>
+      <h1 className="logo-text">1536</h1>
     </div>
   );
 };
@@ -38,9 +38,9 @@ function Header() {
   
   return (
     <header className="header">
-      <div className="header-container container">
+      <div className="header-container">
         <Link to="/" className="logo">
-          <EllaVateLogo />
+          <Logo1536 />
         </Link>
         
         <nav className="nav">
@@ -66,5 +66,5 @@ function Header() {
   );
 }
 
-export { EllaVateLogo };
+export { Logo1536 }; // Export renamed component
 export default Header;

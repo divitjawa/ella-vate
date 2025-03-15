@@ -57,7 +57,7 @@ function Register() {
     <div className="auth-container">
       <div className="auth-form-container">
         <h1>Create Account</h1>
-        <p className="auth-subtitle">Join Ella-Vate to find your perfect job match</p>
+        <p className="auth-subtitle">Join 1536 to find your perfect job match</p>
         
         <form onSubmit={handleSubmit} className="auth-form">
           <div className="form-group">

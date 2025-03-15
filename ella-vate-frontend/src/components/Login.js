@@ -6,7 +6,7 @@ import './Auth.css';
 // Simple logo component directly in this file to avoid import issues
 const ElegantLogo = () => {
   return (
-    <div className="ella-vate-logo">
+    <div className="logo-1536">
       <div className="logo-circle">
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -23,7 +23,7 @@ const ElegantLogo = () => {
           />
         </svg>
       </div>
-      <h1 className="logo-text">Ella-Vate</h1>
+      <h1 className="logo-text">1536</h1>
     </div>
   );
 };

@@ -1,6 +1,6 @@
-# Ella-Vate: AI-Powered Job Matching Platform
+# 1536: AI-Powered Job Matching Platform
 
-Ella-Vate is an AI-driven job matching platform that transforms the job search process by leveraging semantic matching, natural language processing, and automated resume optimization. The platform provides personalized job recommendations based on candidates' qualifications rather than just keywords, while automating resume customization and cover letter generation.
+1536 is an AI-driven job matching platform that transforms the job search process by leveraging semantic matching, natural language processing, and automated resume optimization. The platform provides personalized job recommendations based on candidates' qualifications rather than just keywords, while automating resume customization and cover letter generation.
 
 ## Project Overview
 
@@ -196,7 +196,7 @@ To add real job data to Pinecone, you'll need to:
 
 ## 🤝 Contributors
 
-Ella-Vate Team:
+1536 Team:
 - Ella Braide - ebraide@uw.edu
 - Divit Jawa - divitj@uw.edu
 - Jose Granados - jogran23@uw.edu
